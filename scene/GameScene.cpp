@@ -4,6 +4,8 @@
 #include "Global.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
+#include <random>
+#define PI 3.1415
 
 GameScene::GameScene() {}
 
@@ -22,8 +24,38 @@ void GameScene::Initialize() {
 
 	textureHandle_ = TextureManager::Load("boys.png");
 	model_ = Model::Create();
-	worldTransform_.Initialize();
+
 	viewProjection_.Initialize();
+
+	std::random_device seedGen;
+	std::mt19937_64 engine(seedGen());
+	std::uniform_real_distribution<float> distRange(-15, 15);
+	std::uniform_real_distribution<float> scaleRange(1, 2);
+	std::uniform_real_distribution<float> rotRange(0, 2 * PI);
+
+	Matrix4 matScale;
+	Matrix4 matRot;
+	Matrix4 matTrans;
+	worldTransform_.Initialize();
+	worldTransform_.scale_ = { 1.5f,1.5f,1.5f };
+	worldTransform_.rotation_ = { rotRange(engine),rotRange(engine),rotRange(engine) };
+	worldTransform_.translation_ = { 0,0,0 };
+	worldTransform_.matWorld_.Identity();
+
+	matScale.Identity();
+	matScale.Scale(worldTransform_.scale_);
+
+	matRot.Identity();
+	matRot.Rotation(worldTransform_.rotation_);
+
+	matTrans.Identity();
+	matTrans.Transform(worldTransform_.translation_);
+
+	worldTransform_.matWorld_ *= matScale;
+	worldTransform_.matWorld_ *= matRot;
+	worldTransform_.matWorld_ *= matTrans;
+
+	worldTransform_.TransferMatrix();
 }
 
 void GameScene::Update() {
@@ -42,6 +74,18 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
+	for (int z = 0; z < 21; z++) {
+		PrimitiveDrawer::GetInstance()->DrawLine3d(
+			{ -30.f , 0, 30.f - (float)(3 * z) },
+			{ 30.f , 0, 30.f - (float)(3 * z) },
+			{ 255,255,255,1.f });
+	}
+	for (int x = 0; x < 21; x++) {
+		PrimitiveDrawer::GetInstance()->DrawLine3d(
+			{ -30.f + float(3 * x),0,-30 },
+			{ -30.f + float(3 * x),0,30 },
+			{ 255,255,255,1.f });
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -58,20 +102,6 @@ void GameScene::Draw() {
 	/// </summary>
 	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
-	for (int z = 0; z < 21; z++) {
-		PrimitiveDrawer::GetInstance()->DrawLine3d(
-			{ -30.f , 0, 30.f - (float)(3 * z) },
-			{ 30.f , 0, 30.f - (float)(3 * z) },
-			{ 255,255,255,1.f });
-	}
-	for (int x = 0; x < 21; x++) {
-		PrimitiveDrawer::GetInstance()->DrawLine3d(
-			{-30.f+float(3*x),0,-30},
-			{-30.f+float(3*x),0,30},
-			{ 255,255,255,1.f });
-	}
-
-
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
