@@ -78,19 +78,12 @@ void GameScene::Update() {
 	Vector3 moveKeyInput;
 	const float moveSpeed = 0.01f;
 
-	moveKeyInput = 
-	move = 
-	{ (input_->PushKey(DIK_D) - input_->PushKey(DIK_A)) * moveSpeed,
-		0,
-		(input_->PushKey(DIK_W) - input_->PushKey(DIK_S)) * moveSpeed
-	};
+	moveKeyInput.x += input_->PushKey(DIK_D) - input_->PushKey(DIK_A);
+	moveKeyInput.z += input_->PushKey(DIK_W) - input_->PushKey(DIK_S);
+
+	move += moveKeyInput * moveSpeed;
 
 	worldTransform_[0].translation_ += move;
-
-	Matrix4 matTrans;
-	matTrans.Identity();
-	matTrans.Transform(worldTransform_[0].translation_);
-	worldTransform_[0].matWorld_ *= matTrans;
 	worldTransform_[0].TransferMatrix();
 
 	//デバッグ用
