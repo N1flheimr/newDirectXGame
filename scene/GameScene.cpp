@@ -33,33 +33,70 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> scaleRange(1, 2);
 	std::uniform_real_distribution<float> rotRange(0, 2 * PI);
 
-	Matrix4 matScale;
-	Matrix4 matRot;
-	Matrix4 matTrans;
-	worldTransform_.Initialize();
-	worldTransform_.scale_ = { 1.5f,1.5f,1.5f };
-	worldTransform_.rotation_ = { rotRange(engine),rotRange(engine),rotRange(engine) };
-	worldTransform_.translation_ = { 0,0,0 };
-	worldTransform_.matWorld_.Identity();
+	Matrix4 matScale[2];
+	Matrix4 matRot[2];
+	Matrix4 matTrans[2];
 
-	matScale.Identity();
-	matScale.Scale(worldTransform_.scale_);
+	worldTransform_[0].Initialize();
+	worldTransform_[1].Initialize();
+	worldTransform_[1].translation_ = { 0,4.5f,0 };
+	worldTransform_[1].parent_ = &worldTransform_[0];
 
-	matRot.Identity();
-	matRot.Rotation(worldTransform_.rotation_);
+	matScale[0].Identity();
+	matScale[0].Scale(worldTransform_[0].scale_);
 
-	matTrans.Identity();
-	matTrans.Transform(worldTransform_.translation_);
+	matRot[0].Identity();
+	matRot[0].Rotation(worldTransform_[0].rotation_);
 
-	worldTransform_.matWorld_ *= matScale;
-	worldTransform_.matWorld_ *= matRot;
-	worldTransform_.matWorld_ *= matTrans;
+	matTrans[0].Identity();
+	matTrans[0].Transform(worldTransform_[0].translation_);
 
-	worldTransform_.TransferMatrix();
+	matScale[1].Identity();
+	matScale[1].Scale(worldTransform_[1].scale_);
+
+	matRot[1].Identity();
+	matRot[1].Rotation(worldTransform_[1].rotation_);
+
+	matTrans[1].Identity();
+	matTrans[1].Transform(worldTransform_[1].translation_);
+
+	worldTransform_[0].matWorld_ *= matScale[0];
+	worldTransform_[0].matWorld_ *= matRot[0];
+	worldTransform_[0].matWorld_ *= matTrans[0];
+
+	worldTransform_[1].matWorld_ *= matScale[1];
+	worldTransform_[1].matWorld_ *= matRot[1];
+	worldTransform_[1].matWorld_ *= matTrans[1];
+
+	worldTransform_[0].TransferMatrix();
+	worldTransform_[1].TransferMatrix();
 }
 
 void GameScene::Update() {
 	debugCamera_->Update();
+	Vector3 move = { 0,0,0 };
+	const float speed = 0.01f;
+
+	move = 
+	{ (input_->PushKey(DIK_D) - input_->PushKey(DIK_A)) * speed,
+		0,
+		(input_->PushKey(DIK_W) - input_->PushKey(DIK_S)) * speed 
+	};
+
+	worldTransform_[0].translation_ += move;
+
+	Matrix4 matTrans;
+	matTrans.Identity();
+	matTrans.Transform(worldTransform_[0].translation_);
+	worldTransform_[0].matWorld_ *= matTrans;
+	worldTransform_[0].TransferMatrix();
+
+	//デバッグ用
+	debugText_->SetPos(30, 30);
+	debugText_->Printf("Translation: (%f, %f, %f)",
+		worldTransform_[0].translation_.x,
+		worldTransform_[0].translation_.y,
+		worldTransform_[0].translation_.z);
 }
 
 void GameScene::Draw() {
@@ -101,7 +138,8 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	model_->Draw(worldTransform_[0], debugCamera_->GetViewProjection(), textureHandle_);
+	model_->Draw(worldTransform_[1], debugCamera_->GetViewProjection(), textureHandle_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
