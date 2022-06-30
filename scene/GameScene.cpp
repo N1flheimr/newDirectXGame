@@ -75,9 +75,10 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	debugCamera_->Update();
 	Vector3 move = move.Zero();
-	
+	Vector3 moveKeyInput;
 	const float moveSpeed = 0.01f;
 
+	moveKeyInput = 
 	move = 
 	{ (input_->PushKey(DIK_D) - input_->PushKey(DIK_A)) * moveSpeed,
 		0,
