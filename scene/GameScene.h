@@ -17,9 +17,23 @@
 class GameScene {
 
 public: // メンバ関数
-  /// <summary>
-  /// コンストクラタ
-  /// </summary>
+	enum PartID {
+		kRoot,
+		kSpine,
+		kChest,
+		kHead,
+		kArmL,
+		kArmR,
+		kHip,
+		kLegL,
+		kLegR,
+
+		kNumPartID
+	};
+
+	/// <summary>
+	/// コンストクラタ
+	/// </summary>
 	GameScene();
 
 	/// <summary>
@@ -51,7 +65,7 @@ private: // メンバ変数
 	uint32_t textureHandle_;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransform_[2];
+	WorldTransform worldTransform_[kNumPartID];
 	ViewProjection viewProjection_;
 
 	DebugCamera* debugCamera_ = nullptr;
