@@ -65,6 +65,7 @@ void GameScene::Update() {
 	Vector3 move = move.Zero();
 	Vector3 moveKeyInput;
 	const float moveSpeed = 0.125f;
+	const float rotSpeed = 0.05f;
 
 	moveKeyInput.x += input_->PushKey(DIK_D) - input_->PushKey(DIK_A);
 	moveKeyInput.z += input_->PushKey(DIK_W) - input_->PushKey(DIK_S);
@@ -73,8 +74,10 @@ void GameScene::Update() {
 	move.z += moveKeyInput.z * moveSpeed;
 
 	worldTransform_[kRoot].translation_ += move;
-	//worldTransform_[kRoot].matWorld_.Transform(worldTransform_[0].translation_);
-	//worldTransform_[kRoot].TransferMatrix();
+	if (input_->PushKey(DIK_Q)) {
+		worldTransform_[kChest].rotation_.y -= rotSpeed;
+		min(worldTransform_[kChest].rotation.y, PI * 2);
+	}
 
 	for (int i = 0; i < kNumPartID; i++) {
 		worldTransform_[i].Set(worldTransform_[i].matWorld_);
