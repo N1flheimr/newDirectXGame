@@ -75,6 +75,9 @@
     <ClCompile Include="Vector3.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
+    <ClCompile Include="WorldTransform.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3d\ViewProjection.h">

@@ -27,49 +27,37 @@ void GameScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-	worldTransform_[kRoot].Initialize();
+	for (int i = 0; i < kNumPartID; i++) {
+		worldTransform_[i].Initialize();
+	}
 
-	worldTransform_[kSpine].Initialize();
 	worldTransform_[kSpine].parent_ = &worldTransform_[kRoot];
 	worldTransform_[kSpine].translation_ = { 0,2.5f,0 };
 
-	worldTransform_[kChest].Initialize();
 	worldTransform_[kChest].parent_ = &worldTransform_[kSpine];
 
-	worldTransform_[kHead].Initialize();
 	worldTransform_[kHead].parent_ = &worldTransform_[kChest];
 	worldTransform_[kHead].translation_ = { 0,2.5f,0 };
 
-	worldTransform_[kArmL].Initialize();
 	worldTransform_[kArmL].parent_ = &worldTransform_[kChest];
 	worldTransform_[kArmL].translation_ = { -2.5f,0,0 };
 
-	worldTransform_[kArmR].Initialize();
 	worldTransform_[kArmR].parent_ = &worldTransform_[kChest];
 	worldTransform_[kArmR].translation_ = { 2.5f,0,0 };
 
-	worldTransform_[kHip].Initialize();
 	worldTransform_[kHip].parent_ = &worldTransform_[kSpine];
 	worldTransform_[kHip].translation_ = { 0,-2.5f,0 };
 
-	worldTransform_[kLegL].Initialize();
 	worldTransform_[kLegL].parent_ = &worldTransform_[kHip];
-	worldTransform_[kLegL].translation_ = { -2.5f,-2.5f,0 };
+	worldTransform_[kLegL].translation_ = { -2.5f,-5.f,0 };
 
-	worldTransform_[kLegR].Initialize();
 	worldTransform_[kLegR].parent_ = &worldTransform_[kHip];
-	worldTransform_[kLegL].translation_ = { 2.5f,-2.5f,0 };
+	worldTransform_[kLegR].translation_ = { 2.5f,-5.f,0 };
 
-	worldTransform_[kRoot].matWorld_.Rotation(worldTransform_[kRoot].rotation_);
-	worldTransform_[kRoot].matWorld_.Scale(worldTransform_[kRoot].scale_);
-	worldTransform_[kRoot].matWorld_.Transform(worldTransform_[kRoot].translation_);
-
-	worldTransform_[kSpine].matWorld_.Rotation(worldTransform_[kSpine].rotation_);
-	worldTransform_[kSpine].matWorld_.Scale(worldTransform_[kSpine].scale_);
-	worldTransform_[kSpine].matWorld_.Transform(worldTransform_[kSpine].translation_);
-
-	worldTransform_[kRoot].TransferMatrix();
-	worldTransform_[kSpine].TransferMatrix();
+	for (int i = 0; i < kNumPartID; i++) {
+		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].TransferMatrix();
+	}
 }
 
 void GameScene::Update() {
@@ -88,13 +76,12 @@ void GameScene::Update() {
 	//worldTransform_[kRoot].matWorld_.Transform(worldTransform_[0].translation_);
 	//worldTransform_[kRoot].TransferMatrix();
 
-
-	//子の更新
-	worldTransform_[kSpine].matWorld_.Rotation(worldTransform_[kSpine].rotation_);
-	worldTransform_[kSpine].matWorld_.Scale(worldTransform_[kSpine].scale_);
-	worldTransform_[kSpine].matWorld_.Transform(worldTransform_[kSpine].translation_);
-	worldTransform_[kSpine].matWorld_ *= worldTransform_[kRoot].matWorld_;
-	worldTransform_[kSpine].TransferMatrix();
+	for (int i = 0; i < kNumPartID; i++) {
+		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		//子の更新
+		worldTransform_[i].matWorld_ *= worldTransform_[kRoot].matWorld_;
+		worldTransform_[i].TransferMatrix();
+	}
 
 	//デバッグ用
 	debugText_->SetPos(30, 30);
@@ -148,6 +135,12 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	for (int i = 0; i < kNumPartID; i++) {
+		if (i == kRoot || i == kSpine) {
+			continue;
+		}
+		model_->Draw(worldTransform_[i], debugCamera_->GetViewProjection(), textureHandle_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
