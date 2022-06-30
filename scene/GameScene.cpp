@@ -74,13 +74,14 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	debugCamera_->Update();
-	Vector3 move = { 0,0,0 };
-	const float speed = 0.01f;
+	Vector3 move = move.Zero();
+	
+	const float moveSpeed = 0.01f;
 
 	move = 
-	{ (input_->PushKey(DIK_D) - input_->PushKey(DIK_A)) * speed,
+	{ (input_->PushKey(DIK_D) - input_->PushKey(DIK_A)) * moveSpeed,
 		0,
-		(input_->PushKey(DIK_W) - input_->PushKey(DIK_S)) * speed 
+		(input_->PushKey(DIK_W) - input_->PushKey(DIK_S)) * moveSpeed
 	};
 
 	worldTransform_[0].translation_ += move;
