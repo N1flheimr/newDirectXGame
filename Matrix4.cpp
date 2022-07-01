@@ -30,9 +30,9 @@ void Matrix4::Rotation(const Vector3 rot) {
 		0,0,0,1
 	};
 	rotY = {
-		cosf(rot.y),0,sinf(rot.y),0,
+		cosf(rot.y),0,-sinf(rot.y),0,
 		0,1,0,0,
-		-sinf(rot.y),0,cosf(rot.y),0,
+		sinf(rot.y),0,cosf(rot.y),0,
 		0,0,0,1
 	};
 	rotZ = {
@@ -41,12 +41,12 @@ void Matrix4::Rotation(const Vector3 rot) {
 		0,0,1,0,
 		0,0,0,1
 	};
+	*this *= rotZ;
 	*this *= rotX;
 	*this *= rotY;
-	*this *= rotZ;
 }
 
-void Matrix4::Transform(const Vector3 trans) {
+void Matrix4::Translation(const Vector3 trans) {
 	m[3][0] = trans.x;
 	m[3][1] = trans.y;
 	m[3][2] = trans.z;

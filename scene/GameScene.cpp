@@ -33,29 +33,12 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> scaleRange(1, 2);
 	std::uniform_real_distribution<float> rotRange(0, 2 * PI);
 
-	Matrix4 matScale;
-	Matrix4 matRot;
-	Matrix4 matTrans;
 	worldTransform_.Initialize();
-	worldTransform_.scale_ = { 1.5f,1.5f,1.5f };
-	worldTransform_.rotation_ = { rotRange(engine),rotRange(engine),rotRange(engine) };
-	worldTransform_.translation_ = { 0,0,0 };
-	worldTransform_.matWorld_.Identity();
+	worldTransform_.rotation_ = { PI / 4,PI / 4,0 };
+	worldTransform_.scale_ = { 5.f,5.f,5.f };
+	worldTransform_.translation_ = { 10,10,10 };
 
-	matScale.Identity();
-	matScale.Scale(worldTransform_.scale_);
-
-	matRot.Identity();
-	matRot.Rotation(worldTransform_.rotation_);
-
-	matTrans.Identity();
-	matTrans.Transform(worldTransform_.translation_);
-
-	worldTransform_.matWorld_ *= matScale;
-	worldTransform_.matWorld_ *= matRot;
-	worldTransform_.matWorld_ *= matTrans;
-
-	worldTransform_.TransferMatrix();
+	worldTransform_.Set();
 }
 
 void GameScene::Update() {
