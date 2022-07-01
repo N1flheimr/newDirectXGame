@@ -20,11 +20,13 @@ public:
 	// 代入演算子オーバーロード
 	Matrix4& operator*=(const Matrix4& m2);
 
+	//単位行列
 	void Identity();
 
+	//スケーリング設定
 	void Scale(const Vector3 scale);
-
+	//回転設定
 	void Rotation(const Vector3 rot);
-
-	void Transform(const Vector3 trans);
+	//平行移動設定
+	void Translation(const Vector3 trans);
 };

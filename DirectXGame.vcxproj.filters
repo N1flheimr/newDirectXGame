@@ -49,6 +49,9 @@
     <Filter Include="ヘッダー ファイル\math">
       <UniqueIdentifier>{647f4977-924a-4954-923f-5619e5afc9a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D">
+      <UniqueIdentifier>{01538f37-92a6-4b62-b97a-f7d4e078c129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="Vector3.cpp">
       <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldTransform.cpp">
+      <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
