@@ -1,7 +1,7 @@
 #include "WorldTransform.h"
 
-void WorldTransform::Set(Matrix4& matWorld) {
-	matWorld.Rotation(rotation_);
-	matWorld.Scale(scale_);
-	matWorld.Transform(translation_);
+void WorldTransform::Set() {
+	matWorld_.Rotation(rotation_);
+	matWorld_.Scale(scale_);
+	matWorld_.Transform(translation_);
 }

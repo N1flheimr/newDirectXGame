@@ -60,11 +60,11 @@ void GameScene::Initialize() {
 	worldTransform_[kLegR].translation_ = { 2.5f,-2.5f,0 };
 
 	for (int i = 0; i < kNumPartID; i++) {
-		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].Set();
 		worldTransform_[i].TransferMatrix();
 	}
 #pragma endregion
-	
+
 }
 
 void GameScene::Update() {
@@ -102,20 +102,20 @@ void GameScene::Update() {
 	}
 
 	for (int i = 0; i < kNumPartID; i++) {
-		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].Set();
 		//子の更新
 		if (i != kRoot)
 			worldTransform_[i].matWorld_ *= worldTransform_[kRoot].matWorld_;
 		worldTransform_[i].TransferMatrix();
 	}
 	for (int i = kArmL; i <= kArmR; i++) {
-		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].Set();
 		worldTransform_[i].matWorld_ *= worldTransform_[kChest].matWorld_;
 		worldTransform_[i].TransferMatrix();
 	}
 
 	for (int i = kLegL; i <= kLegR; i++) {
-		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].Set();
 		worldTransform_[i].matWorld_ *= worldTransform_[kHip].matWorld_;
 		worldTransform_[i].TransferMatrix();
 	}
