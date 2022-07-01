@@ -25,12 +25,17 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("boys.png");
 	model_ = Model::Create();
 
+#pragma region Initialize
 	viewProjection_.Initialize();
 
 	for (int i = 0; i < kNumPartID; i++) {
 		worldTransform_[i].Initialize();
 	}
+#pragma endregion
 
+
+
+#pragma region WTParentStructure
 	worldTransform_[kSpine].parent_ = &worldTransform_[kRoot];
 	worldTransform_[kSpine].translation_ = { 0,2.5f,0 };
 
@@ -49,15 +54,17 @@ void GameScene::Initialize() {
 	worldTransform_[kHip].translation_ = { 0,-2.5f,0 };
 
 	worldTransform_[kLegL].parent_ = &worldTransform_[kHip];
-	worldTransform_[kLegL].translation_ = { -2.5f,-5.f,0 };
+	worldTransform_[kLegL].translation_ = { -2.5f,-2.5f,0 };
 
 	worldTransform_[kLegR].parent_ = &worldTransform_[kHip];
-	worldTransform_[kLegR].translation_ = { 2.5f,-5.f,0 };
+	worldTransform_[kLegR].translation_ = { 2.5f,-2.5f,0 };
 
 	for (int i = 0; i < kNumPartID; i++) {
 		worldTransform_[i].Set(worldTransform_[i].matWorld_);
 		worldTransform_[i].TransferMatrix();
 	}
+#pragma endregion
+	
 }
 
 void GameScene::Update() {
@@ -65,7 +72,7 @@ void GameScene::Update() {
 	Vector3 move = move.Zero();
 	Vector3 moveKeyInput;
 	const float moveSpeed = 0.125f;
-	const float rotSpeed = 0.05f;
+	const float rotSpeed = 0.005f;
 
 	moveKeyInput.x += input_->PushKey(DIK_D) - input_->PushKey(DIK_A);
 	moveKeyInput.z += input_->PushKey(DIK_W) - input_->PushKey(DIK_S);
@@ -74,30 +81,51 @@ void GameScene::Update() {
 	move.z += moveKeyInput.z * moveSpeed;
 
 	worldTransform_[kRoot].translation_ += move;
-	if (input_->PushKey(DIK_Q)) {
-		worldTransform_[kChest].rotation_.y -= rotSpeed;
-		min(worldTransform_[kChest].rotation.y, PI * 2);
+	//if (input_->PushKey(DIK_Q)) {
+	//	worldTransform_[kChest].rotation_ =
+	//	{ worldTransform_[kChest].rotation_.x,
+	//	worldTransform_[kChest].rotation_.y - rotSpeed,
+	//	worldTransform_[kChest].rotation_.z };
+	//	min(worldTransform_[kChest].rotation.y, PI * 2);
+	//}
+
+	if (input_->PushKey(DIK_SPACE)) {
+		worldTransform_[kChest].scale_.x += 0.002f;
+		worldTransform_[kChest].scale_.y += 0.002f;
+		worldTransform_[kChest].scale_.z += 0.002f;
+		worldTransform_[kHip].scale_.x += 0.002f;
+		worldTransform_[kHip].scale_.y += 0.002f;
+		worldTransform_[kHip].scale_.z += 0.002f;
+		worldTransform_[kHead].scale_.x += 0.002f;
+		worldTransform_[kHead].scale_.y += 0.002f;
+		worldTransform_[kHead].scale_.z += 0.002f;
 	}
 
 	for (int i = 0; i < kNumPartID; i++) {
 		worldTransform_[i].Set(worldTransform_[i].matWorld_);
 		//子の更新
-		worldTransform_[i].matWorld_ *= worldTransform_[kRoot].matWorld_;
+		if (i != kRoot)
+			worldTransform_[i].matWorld_ *= worldTransform_[kRoot].matWorld_;
+		worldTransform_[i].TransferMatrix();
+	}
+	for (int i = kArmL; i <= kArmR; i++) {
+		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].matWorld_ *= worldTransform_[kChest].matWorld_;
+		worldTransform_[i].TransferMatrix();
+	}
+
+	for (int i = kLegL; i <= kLegR; i++) {
+		worldTransform_[i].Set(worldTransform_[i].matWorld_);
+		worldTransform_[i].matWorld_ *= worldTransform_[kHip].matWorld_;
 		worldTransform_[i].TransferMatrix();
 	}
 
 	//デバッグ用
 	debugText_->SetPos(30, 30);
-	debugText_->Printf("WT[0].Translation: (%f, %f, %f)",
+	debugText_->Printf("WT[Root].Translation: (%f, %f, %f)",
 		worldTransform_[kRoot].translation_.x,
 		worldTransform_[kRoot].translation_.y,
 		worldTransform_[kRoot].translation_.z);
-
-	debugText_->SetPos(30, 50);
-	debugText_->Printf("WT[1].Translation: (%f, %f, %f)",
-		worldTransform_[kSpine].translation_.x,
-		worldTransform_[kSpine].translation_.y,
-		worldTransform_[kSpine].translation_.z);
 }
 
 void GameScene::Draw() {
