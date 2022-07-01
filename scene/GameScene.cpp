@@ -61,7 +61,6 @@ void GameScene::Initialize() {
 
 	for (int i = 0; i < kNumPartID; i++) {
 		worldTransform_[i].Set();
-		worldTransform_[i].TransferMatrix();
 	}
 #pragma endregion
 
