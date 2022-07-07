@@ -68,6 +68,8 @@ private: // メンバ変数
 	WorldTransform worldTransform_[kNumPartID];
 	ViewProjection viewProjection_;
 
+	float rotAngle = 0.f;
+
 	DebugCamera* debugCamera_ = nullptr;
 	/// <summary>
 	/// ゲームシーン用
