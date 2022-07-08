@@ -1,8 +1,22 @@
 #include "WorldTransform.h"
 
 void WorldTransform::Set() {
-	matWorld_.Scale(scale_);
-	matWorld_.Rotation(rotation_);
-	matWorld_.Translation(translation_);
-	TransferMatrix();
+	Matrix4 matRot;
+	matRot.Identity();
+
+	Matrix4 matScale;
+	matScale.Identity();
+
+	Matrix4 matTrans;
+	matTrans.Identity();
+
+	matScale.Scale(scale_);
+	matTrans.Translation(translation_);
+	matRot.Rotation(rotation_);
+
+	matWorld_.Identity();
+
+	matWorld_ *= matScale;
+	matWorld_ *= matRot;
+	matWorld_ *= matTrans;
 }

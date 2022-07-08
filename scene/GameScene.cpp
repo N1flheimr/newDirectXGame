@@ -39,6 +39,7 @@ void GameScene::Initialize() {
 	worldTransform_.translation_ = { 10,10,10 };
 
 	worldTransform_.Set();
+	worldTransform_.TransferMatrix();
 }
 
 void GameScene::Update() {
