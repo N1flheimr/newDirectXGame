@@ -62,6 +62,7 @@ void GameScene::Initialize() {
 
 	for (int i = 0; i < kNumPartID; i++) {
 		worldTransform_[i].Set();
+		worldTransform_[i].TransferMatrix();
 	}
 #pragma endregion
 
@@ -71,6 +72,7 @@ void GameScene::Update() {
 	debugCamera_->Update();
 	Vector3 move = move.Zero();
 	Vector3 moveKeyInput;
+
 	const float moveSpeed = 0.125f;
 	const float kRotSpeed = 0.015f;
 
@@ -78,9 +80,23 @@ void GameScene::Update() {
 	moveKeyInput.z += input_->PushKey(DIK_W) - input_->PushKey(DIK_S);
 
 	if (input_->PushKey(DIK_E)) {
-		worldTransform_[kArmL].rotation_.y += kRotSpeed;
-		worldTransform_[kArmL].Set();
-		worldTransform_[kArmL].TransferMatrix();
+		worldTransform_[kChest].rotation_.y += kRotSpeed;
+	}
+	if (input_->PushKey(DIK_Q)) {
+		worldTransform_[kChest].rotation_.y -= kRotSpeed;
+	}
+	if (input_->PushKey(DIK_C)) {
+		worldTransform_[kHip].rotation_.y += kRotSpeed;
+	}
+	if (input_->PushKey(DIK_Z)) {
+		worldTransform_[kHip].rotation_.y -= kRotSpeed;
+	}
+
+	if (input_->PushKey(DIK_LEFT)) {
+		worldTransform_[kRoot].rotation_.y -= kRotSpeed;
+	}
+	if (input_->PushKey(DIK_RIGHT)) {
+		worldTransform_[kRoot].rotation_.y += kRotSpeed;
 	}
 
 	move.x += moveKeyInput.x * moveSpeed;
@@ -88,30 +104,30 @@ void GameScene::Update() {
 
 	worldTransform_[kRoot].translation_ += move;
 
-	//if (input_->PushKey(DIK_SPACE)) {
-	//	worldTransform_[kChest].scale_.x += 0.002f;
-	//	worldTransform_[kChest].scale_.y += 0.002f;
-	//	worldTransform_[kChest].scale_.z += 0.002f;
-	//	worldTransform_[kHip].scale_.x += 0.002f;
-	//	worldTransform_[kHip].scale_.y += 0.002f;
-	//	worldTransform_[kHip].scale_.z += 0.002f;
-	//	worldTransform_[kHead].scale_.x += 0.002f;
-	//	worldTransform_[kHead].scale_.y += 0.002f;
-	//	worldTransform_[kHead].scale_.z += 0.002f;
-	//}
+	if (input_->PushKey(DIK_SPACE)) {
+		worldTransform_[kChest].scale_.x += 0.002f;
+		worldTransform_[kChest].scale_.y += 0.002f;
+		worldTransform_[kChest].scale_.z += 0.002f;
+		worldTransform_[kHip].scale_.x += 0.002f;
+		worldTransform_[kHip].scale_.y += 0.002f;
+		worldTransform_[kHip].scale_.z += 0.002f;
+		worldTransform_[kHead].scale_.x += 0.002f;
+		worldTransform_[kHead].scale_.y += 0.002f;
+		worldTransform_[kHead].scale_.z += 0.002f;
+	}
 
-	//for (int i = 0; i < kNumPartID; i++) {
-	//	worldTransform_[i].Set();
-	//	//子の更新
-	//	if (i != kRoot)
-	//		worldTransform_[i].matWorld_ *= worldTransform_[kRoot].matWorld_;
-	//	worldTransform_[i].TransferMatrix();
-	//}
-	//for (int i = kArmL; i <= kArmR; i++) {
-	//	worldTransform_[i].Set();
-	//	worldTransform_[i].matWorld_ *= worldTransform_[kChest].matWorld_;
-	//	worldTransform_[i].TransferMatrix();
-	//}
+	for (int i = 0; i < kNumPartID; i++) {
+		worldTransform_[i].Set();
+		//子の更新
+		if (i != kRoot)
+			worldTransform_[i].matWorld_ *= worldTransform_[kRoot].matWorld_;
+		worldTransform_[i].TransferMatrix();
+	}
+	for (int i = kArmL; i <= kArmR; i++) {
+		worldTransform_[i].Set();
+		worldTransform_[i].matWorld_ *= worldTransform_[kChest].matWorld_;
+		worldTransform_[i].TransferMatrix();
+	}
 
 	for (int i = kLegL; i <= kLegR; i++) {
 		worldTransform_[i].Set();
@@ -125,10 +141,20 @@ void GameScene::Update() {
 		worldTransform_[kRoot].translation_.x,
 		worldTransform_[kRoot].translation_.y,
 		worldTransform_[kRoot].translation_.z);
-
 	debugText_->SetPos(30, 50);
+	debugText_->Printf("WT[Root].Rot: (%f)",
+		worldTransform_[kRoot].rotation_.y);
+
+	debugText_->SetPos(30, 70);
 	debugText_->Printf("WT[chest].rot.y: (%f)",
 		worldTransform_[kChest].rotation_.y);
+
+	debugText_->SetPos(30, 90);
+	debugText_->Printf("WT[hip].rot.y: (%f)",
+		worldTransform_[kHip].rotation_.y);
+
+	debugText_->SetPos(30, 110);
+	debugText_->Printf("QE: Chest rotation, \t ZC: Hip rotation \t LEFT/RIGHT: Root rotation \t SPACE: Scale");
 }
 
 void GameScene::Draw() {
