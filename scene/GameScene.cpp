@@ -33,13 +33,20 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> scaleRange(1, 2);
 	std::uniform_real_distribution<float> rotRange(0, 2 * PI);
 
-	worldTransform_.Initialize();
-	worldTransform_.rotation_ = { PI / 4,PI / 4,0 };
-	worldTransform_.scale_ = { 5.f,5.f,5.f };
-	worldTransform_.translation_ = { 10,10,10 };
+	for (int y = 0; y < _countof(worldTransform_); y++) {
+		for (int x = 0; x < _countof(worldTransform_); x++) {
+			for (int z = 0; z < _countof(worldTransform_); z++) {
+				worldTransform_[y][x][z].Initialize();
+				worldTransform_[y][x][z].translation_ =
+				{ -6.f + (float)(3.f * x),
+					-6.f + (float)(3.f * y),
+					0.f + (float)(3.f * z) };
 
-	worldTransform_.Set();
-	worldTransform_.TransferMatrix();
+				worldTransform_[y][x][z].Set();
+				worldTransform_[y][x][z].TransferMatrix();
+			}
+		}
+	}
 }
 
 void GameScene::Update() {
@@ -85,7 +92,13 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	for (int y = 0; y < _countof(worldTransform_); y++) {
+		for (int x = 0; x < _countof(worldTransform_); x++) {
+			for (int z = 0; z < _countof(worldTransform_); z++) {
+				model_->Draw(worldTransform_[y][x][z], debugCamera_->GetViewProjection(), textureHandle_);
+			}
+		}
+	}
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
