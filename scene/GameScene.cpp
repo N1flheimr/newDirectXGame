@@ -44,6 +44,29 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	debugCamera_->Update();
+	Vector3 moveInput;
+	Vector3 rotInput;
+	Vector3 scaleInput;
+	moveInput = {
+		((float)input_->PushKey(DIK_D) - (float)input_->PushKey(DIK_A)) * 0.5f,
+		((float)input_->PushKey(DIK_W) - (float)input_->PushKey(DIK_S)) * 0.5f,
+		0.f };
+	rotInput = {
+		(float)(input_->PushKey(DIK_LEFT) - input_->PushKey(DIK_RIGHT)) * 0.05f,
+		0.f,
+		(float)(input_->PushKey(DIK_UP) - input_->PushKey(DIK_DOWN)) * 0.05f };
+	scaleInput = {
+		(float)(input_->PushKey(DIK_U) - input_->PushKey(DIK_I)) * 0.2f,
+		(float)(input_->PushKey(DIK_U) - input_->PushKey(DIK_I)) * 0.2f,
+		(float)(input_->PushKey(DIK_U) - input_->PushKey(DIK_I)) * 0.2f
+	};
+
+	worldTransform_.scale_ += scaleInput;
+	worldTransform_.rotation_ += rotInput;
+	worldTransform_.translation_ += moveInput;
+
+	worldTransform_.Set();
+	worldTransform_.TransferMatrix();
 }
 
 void GameScene::Draw() {
@@ -58,18 +81,18 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	for (int z = 0; z < 21; z++) {
-		PrimitiveDrawer::GetInstance()->DrawLine3d(
-			{ -30.f , 0, 30.f - (float)(3 * z) },
-			{ 30.f , 0, 30.f - (float)(3 * z) },
-			{ 255,255,255,1.f });
-	}
-	for (int x = 0; x < 21; x++) {
-		PrimitiveDrawer::GetInstance()->DrawLine3d(
-			{ -30.f + float(3 * x),0,-30 },
-			{ -30.f + float(3 * x),0,30 },
-			{ 255,255,255,1.f });
-	}
+	//for (int z = 0; z < 21; z++) {
+	//	PrimitiveDrawer::GetInstance()->DrawLine3d(
+	//		{ -30.f , 0, 30.f - (float)(3 * z) },
+	//		{ 30.f , 0, 30.f - (float)(3 * z) },
+	//		{ 255,255,255,1.f });
+	//}
+	//for (int x = 0; x < 21; x++) {
+	//	PrimitiveDrawer::GetInstance()->DrawLine3d(
+	//		{ -30.f + float(3 * x),0,-30 },
+	//		{ -30.f + float(3 * x),0,30 },
+	//		{ 255,255,255,1.f });
+	//}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
