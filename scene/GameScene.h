@@ -10,6 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include "Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,10 +52,12 @@ class GameScene {
 	uint32_t textureHandle_;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransform_;
+	Player* player_ = nullptr;
 	ViewProjection viewProjection_;
 
 	DebugCamera* debugCamera_ = nullptr;
+
+	bool isDebugCameraActive_ = false;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

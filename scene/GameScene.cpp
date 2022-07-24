@@ -9,7 +9,7 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() { delete model_; delete debugCamera_; }
+GameScene::~GameScene() { delete model_; delete debugCamera_; delete player_; }
 
 void GameScene::Initialize() {
 
@@ -19,11 +19,14 @@ void GameScene::Initialize() {
 	debugText_ = DebugText::GetInstance();
 	debugCamera_ = new DebugCamera(WIN_WIDTH, WIN_HEIGHT);
 	AxisIndicator::GetInstance()->SetVisible(true);
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
-	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 
 	textureHandle_ = TextureManager::Load("boys.png");
 	model_ = Model::Create();
+
+	player_ = new Player();
+	player_->Initialize(model_, textureHandle_);
 
 	viewProjection_.Initialize();
 
@@ -32,18 +35,27 @@ void GameScene::Initialize() {
 	std::uniform_real_distribution<float> distRange(-15, 15);
 	std::uniform_real_distribution<float> scaleRange(1, 2);
 	std::uniform_real_distribution<float> rotRange(0, 2 * PI);
-
-	worldTransform_.Initialize();
-	worldTransform_.rotation_ = { PI / 4,PI / 4,0 };
-	worldTransform_.scale_ = { 5.f,5.f,5.f };
-	worldTransform_.translation_ = { 10,10,10 };
-
-	worldTransform_.Set();
-	worldTransform_.TransferMatrix();
 }
 
 void GameScene::Update() {
 	debugCamera_->Update();
+	player_->Update();
+
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_Q)) {
+		isDebugCameraActive_ = !isDebugCameraActive_;
+	}
+#endif
+
+	//if (isDebugCameraActive_) {
+	//	debugCamera_->Update();
+	//	viewProjection_.matView = debugCamera_;
+	//	viewProjection_.matProjection = debugCamera_->GetViewProjection();
+	//	viewProjection_.TransferMatrix();
+	//}
+	//else {
+	//	viewProjection_
+	//}
 }
 
 void GameScene::Draw() {
@@ -84,8 +96,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	//model_->Draw(worldTransform_, viewProjection_, textureHandle_);
-	model_->Draw(worldTransform_, debugCamera_->GetViewProjection(), textureHandle_);
+	player_->Draw(viewProjection_);
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
